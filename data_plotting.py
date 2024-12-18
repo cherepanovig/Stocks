@@ -3,6 +3,15 @@ import pandas as pd
 
 
 def create_and_save_plot(data, ticker, period, filename=None):
+    """
+    Создает и сохраняет график цен акций с возможностью отображения скользящего среднего.
+
+    Параметры:
+        data: DataFrame с данными о ценах акций.
+        ticker (str): Тикер акции.
+        period (str): Период для данных.
+        filename (str, optional): Имя файла для сохранения графика (по умолчанию None).
+    """
     plt.figure(figsize=(10, 6))
 
     if 'Date' not in data:
