@@ -79,6 +79,27 @@ def notify_if_strong_fluctuations(data, threshold):
 
     # Сравниваем разницу с пороговым значением
     if price_fluctuation > threshold:
-        print(f"Внимание! Цена акций колебалась более чем на {price_fluctuation:.2f}%, что превышает порог в {threshold}%.")
+        print(f"Внимание! Цена акций колебалась более чем на {price_fluctuation:.2f}%, что превышает порог в "
+              f"{threshold}%.")
     else:
-        print(f"Цена акций колебалась на {price_fluctuation:.2f}%, что находится в пределах допустимого порога в {threshold}%.")
+        print(f"Цена акций колебалась на {price_fluctuation:.2f}%, что находится в пределах допустимого порога в "
+              f"{threshold}%.")
+
+def export_data_to_csv(data, filename):
+    """
+    Экспортирует данные о ценах акций в CSV файл.
+
+    Параметры:
+        data: DataFrame с данными о ценах акций.
+        filename (str): Имя файла для сохранения данных в формате CSV.
+    """
+    if not isinstance(data, pd.DataFrame):
+        print("Ошибка: Переданные данные не являются DataFrame.")
+        return
+
+    try:
+        data.to_csv(filename, index=True)  # Сохраняем данные в CSV файл с индексами
+        print(f"Данные успешно сохранены в файл: {filename}")
+    except Exception as e:
+        print(f"Произошла ошибка при сохранении данных в файл: {e}")
+

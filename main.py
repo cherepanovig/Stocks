@@ -1,5 +1,6 @@
 import data_download as dd
 import data_plotting as dplt
+from datetime import datetime  # Добавляем модуль для работы с датой и временем
 
 
 def main():
@@ -9,7 +10,8 @@ def main():
 
         Пользователь вводит тикер акции и период для данных, а также пороговое значение для колебаний цены в
         процентах после вывода средней цены закрытия. Программа загружает данные, рассчитывает скользящее среднее,
-        выводит среднюю цену закрытия, анализирует колебания цен и строит график.
+        выводит среднюю цену закрытия, анализирует колебания цен и строит график. Также добавлена функция,
+        которая позволяет сохранять загруженные данные об акциях в CSV файл.
 
     """
 
@@ -30,12 +32,24 @@ def main():
     # Add moving average to the data
     stock_data = dd.add_moving_average(stock_data)
 
-    # Calculate and display average price
+    # Вызов функции для рассчета средней цены закрытия
     dd.calculate_and_display_average_price(stock_data)
 
-    # Notify if there are strong fluctuations
     threshold = float(input("Введите пороговое значение для колебаний цены в процентах (например, 10 для 10%): "))
+    # Вызов функции для рассчета колебаний цены акции
     dd.notify_if_strong_fluctuations(stock_data, threshold)
+
+    # Генерация имени файла на основе тикера и текущей даты
+    current_date = datetime.now().strftime("%Y-%m-%d")
+    filename = f"{ticker}_{current_date}_data.csv"
+
+    # Сохранение данных в CSV
+    dd.export_data_to_csv(stock_data, filename)
+    # print(f"Данные сохранены в файл: {filename}")
+
+    # # Сохраняем данные в CSV-файл
+    # csv_filename = input("Введите имя файла для сохранения данных (например, 'stock_data.csv'): ")
+    # dd.export_data_to_csv(stock_data, csv_filename)
 
     # Plot the data
     dplt.create_and_save_plot(stock_data, ticker, period)
