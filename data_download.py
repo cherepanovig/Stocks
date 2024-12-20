@@ -85,6 +85,7 @@ def notify_if_strong_fluctuations(data, threshold):
         print(f"Цена акций колебалась на {price_fluctuation:.2f}%, что находится в пределах допустимого порога в "
               f"{threshold}%.")
 
+
 def export_data_to_csv(data, filename):
     """
     Экспортирует данные о ценах акций в CSV файл.
@@ -103,3 +104,65 @@ def export_data_to_csv(data, filename):
     except Exception as e:
         print(f"Произошла ошибка при сохранении данных в файл: {e}")
 
+
+def add_rsi(data, period=14):
+    """
+    Добавляет столбец с индексом относительной силы (RSI) к DataFrame.
+
+    Параметры:
+        data: DataFrame с данными о ценах акций.
+        period (int, optional): Период для расчета RSI (по умолчанию 14).
+
+    Возвращает:
+        data: DataFrame с добавленным столбцом 'RSI'.
+        Или None, если произошла ошибка.
+    """
+    if not isinstance(data, pd.DataFrame):
+        print("Ошибка: Переданные данные не являются DataFrame.")
+        return None
+
+    if 'Close' not in data.columns:
+        print("Ошибка: В DataFrame отсутствует колонка 'Close'.")
+        return None
+    delta = data['Close'].diff()  # Расчёт изменения цены закрытия
+    up = delta.clip(lower=0)  # Значения роста (акция росла)
+    down = -1 * delta.clip(upper=0)  # Значения падения (акция падала)
+    average_up = up.rolling(window=period).mean()  # Среднее значение роста
+    average_down = down.rolling(window=period).mean()  # Среднее значение падения
+    rs = average_up / average_down  # Отношение роста к падению
+    rsi = 100 - (100 / (1 + rs))  # Вычисляем RSI
+    data['RSI'] = rsi  # Добавляем столбец RSI в DataFrame
+    return data
+
+
+def add_macd(data, fast_period=12, slow_period=26, signal_period=9):
+    """
+    Добавляет столбцы MACD, Signal и Histogram к DataFrame.
+
+    Параметры:
+        data: DataFrame с данными о ценах акций.
+        fast_period (int, optional): Период для быстрого EMA (по умолчанию 12).
+        slow_period (int, optional): Период для медленного EMA (по умолчанию 26).
+        signal_period (int, optional): Период для сигнальной линии EMA (по умолчанию 9).
+
+    Возвращает:
+        data: DataFrame с добавленными столбцами 'MACD', 'Signal' и 'Histogram'.
+        Или None, если произошла ошибка.
+    """
+    if not isinstance(data, pd.DataFrame):
+        print("Ошибка: Переданные данные не являются DataFrame.")
+        return None
+
+    if 'Close' not in data.columns:
+        print("Ошибка: В DataFrame отсутствует колонка 'Close'.")
+        return None
+    fast_ema = data['Close'].ewm(span=fast_period, adjust=False).mean()  # Быстрая EMA
+    slow_ema = data['Close'].ewm(span=slow_period, adjust=False).mean()  # Медленная EMA
+    macd = fast_ema - slow_ema  # MACD = разница между быстрой и медленной EMA
+    signal = macd.ewm(span=signal_period, adjust=False).mean()  # Сигнальная линия
+    histogram = macd - signal  # Гистограмма MACD
+    # Добавляем столбец MACD, Signal, Histogram
+    data['MACD'] = macd
+    data['Signal'] = signal
+    data['Histogram'] = histogram
+    return data
