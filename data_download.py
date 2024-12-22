@@ -2,20 +2,26 @@ import yfinance as yf
 import pandas as pd
 
 
-def fetch_stock_data(ticker, period='1mo'):
+def fetch_stock_data(ticker, period=None, start_date=None, end_date=None):
     """
-    Загружает данные о ценах акций для указанного тикера и периода.
+    Загружает данные о ценах акций для указанного тикера и периода или конкретных дат.
 
     Параметры:
         ticker (str): Тикер акции (например, 'AAPL' для Apple Inc).
         period (str, optional): Период для данных (по умолчанию '1mo' для одного месяца).
+        start_date (str, optional): Начальная дата в формате 'ГГГГ-ММ-ДД'.
+        end_date (str, optional): Дата окончания в формате 'ГГГГ-ММ-ДД'.
 
     Возвращает:
         data: DataFrame с данными о ценах акций.
     """
-    stock = yf.Ticker(ticker)  # Создаем объект Ticker из yfinance, он представляет акцию с введенным тикером
-    data = stock.history(period=period)  # Получаем данные для этой акции за введенный период
-    # print(data.to_string(index=False))  # метод позволяет выводить из DataFrame все столбцы
+    if start_date and end_date:
+        data = yf.Ticker(ticker).history(start=start_date, end=end_date)
+    elif period:
+        data = yf.Ticker(ticker).history(period=period)
+    else:
+        data = yf.Ticker(ticker).history(period='1mo')  # по умолчанию загружаем данные за 1 месяц
+
     return data
 
 

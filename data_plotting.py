@@ -3,15 +3,16 @@ import pandas as pd  # Импортируем pandas для работы с да
 import matplotlib.dates as mdates  # Импортируем для форматирования дат на графиках
 
 
-def create_and_save_plot(data, ticker, period, filename=None):
+def create_and_save_plot(data, ticker, period=None, use_date_range=False, filename=None):
     """
     Создает и сохраняет график цен акций, скользящего среднего, RSI и MACD.
 
     Параметры:
         data: DataFrame с данными о ценах акций.
-      ticker (str): Тикер акции.
-      period (str): Период для данных.
-      filename (str, optional): Имя файла для сохранения графика (по умолчанию None).
+        ticker (str): Тикер акции.
+        period (str, optional): Период для данных (используется для имени файла, если use_date_range=False).
+        use_date_range (bool, optional): Флаг, указывающий, что используется диапазон дат (по умолчанию False).
+        filename (str, optional): Имя файла для сохранения графика (по умолчанию None).
     """
     fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(12, 10), sharex=True)  # Создаем фигуру и 3
     # подграфика, разделяющие ось x
@@ -71,6 +72,12 @@ def create_and_save_plot(data, ticker, period, filename=None):
     plt.tight_layout()  # Устанавливаем layout чтобы графики не перекрывались
 
     if filename is None:  # Проверяем, передано ли имя файла
-        filename = f"{ticker}_{period}_stock_indicators_chart.png"  # Формируем имя файла по умолчанию
+        if use_date_range:
+            start_date = data.index.min().strftime('%Y-%m-%d')
+            end_date = data.index.max().strftime('%Y-%m-%d')
+            filename = f"{ticker}_{start_date}_to_{end_date}_stock_indicators_chart.png"  # Формируем имя файла если
+            # сами указали диапазон дат
+        else:
+            filename = f"{ticker}_{period}_stock_indicators_chart.png"  # Формируем имя файла по умолчанию
     plt.savefig(filename)  # Сохраняем график в файл
     print(f"График сохранен как {filename}")  # Выводим сообщение о сохранении графика

@@ -24,10 +24,30 @@ def main():
         "макс.")
 
     ticker = input("Введите тикер акции (например, «AAPL» для Apple Inc): ")
-    period = input("Введите период для данных (например, '1mo' для одного месяца): ")
+    # period = input("Введите период для данных (например, '1mo' для одного месяца): ")
+    use_date_range = input("Хотите указать диапазон дат (да/нет)? ").lower()
+    if use_date_range == "да":
+        start_date_str = input("Введите дату начала в формате ГГГГ-ММ-ДД (например, 2024-01-01): ")
+        end_date_str = input("Введите дату окончания в формате ГГГГ-ММ-ДД (например, 2024-03-01): ")
+        try:
+            start_date = datetime.strptime(start_date_str, "%Y-%m-%d").date()
+            end_date = datetime.strptime(end_date_str, "%Y-%m-%d").date()
+        except ValueError:
+            print("Ошибка: Некорректный формат даты. Используйте ГГГГ-ММ-ДД.")
+            return
 
-    # Fetch stock data
-    stock_data = dd.fetch_stock_data(ticker, period)
+        # Вызов функции fetch_stock_data для получения данных
+        stock_data = dd.fetch_stock_data(ticker, start_date=start_date, end_date=end_date)
+
+    else:
+        period = input("Введите период для данных (например, '1mo' для одного месяца): ")
+
+        # Вызов функции fetch_stock_data для получения данных
+        stock_data = dd.fetch_stock_data(ticker, period=period)
+
+    if stock_data.empty:
+        print("Не удалось получить данные для указанных параметров.")
+        return
 
     # Add moving average to the data
     stock_data = dd.add_moving_average(stock_data)
@@ -58,7 +78,11 @@ def main():
     # dd.export_data_to_csv(stock_data, csv_filename)
 
     # Plot the data
-    dplt.create_and_save_plot(stock_data, ticker, period)
+    # dplt.create_and_save_plot(stock_data, ticker, period)
+    if use_date_range == "да":
+        dplt.create_and_save_plot(stock_data, ticker, period=None, use_date_range=True)
+    else:
+        dplt.create_and_save_plot(stock_data, ticker, period=period, use_date_range=False)
 
 
 if __name__ == "__main__":
