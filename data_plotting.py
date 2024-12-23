@@ -3,7 +3,7 @@ import pandas as pd  # Импортируем pandas для работы с да
 import matplotlib.dates as mdates  # Импортируем для форматирования дат на графиках
 
 
-def create_and_save_plot(data, ticker, period=None, use_date_range=False, filename=None):
+def create_and_save_plot(data, ticker, period=None, use_date_range=False, filename=None, plot_style='default'):
     """
     Создает и сохраняет график цен акций, скользящего среднего, RSI и MACD.
 
@@ -13,7 +13,10 @@ def create_and_save_plot(data, ticker, period=None, use_date_range=False, filena
         period (str, optional): Период для данных (используется для имени файла, если use_date_range=False).
         use_date_range (bool, optional): Флаг, указывающий, что используется диапазон дат (по умолчанию False).
         filename (str, optional): Имя файла для сохранения графика (по умолчанию None).
+        plot_style (str, optional): Стиль графика (по умолчанию 'default').
     """
+    plt.style.use(plot_style)  # Применяем выбранный стиль
+
     fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(12, 10), sharex=True)  # Создаем фигуру и 3
     # подграфика, разделяющие ось x
 

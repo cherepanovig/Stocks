@@ -1,6 +1,7 @@
 import data_download as dd
 import data_plotting as dplt
 from datetime import datetime  # Добавляем модуль для работы с датой и временем
+import matplotlib.pyplot as plt  # Для запроса видов стиля графика
 
 
 def main():
@@ -11,7 +12,7 @@ def main():
         Пользователь вводит тикер акции и период для данных, а также пороговое значение для колебаний цены в
         процентах после вывода средней цены закрытия. Программа загружает данные, рассчитывает скользящее среднее,
         выводит среднюю цену закрытия, анализирует колебания цен, рассчитывает MACD, RSI и строит график. Также добавлена функция,
-        которая позволяет сохранять загруженные данные об акциях в CSV файл.
+        которая позволяет сохранять загруженные данные об акциях в CSV файл. Доступен выбор стиля графиков.
 
     """
 
@@ -77,12 +78,21 @@ def main():
     # csv_filename = input("Введите имя файла для сохранения данных (например, 'stock_data.csv'): ")
     # dd.export_data_to_csv(stock_data, csv_filename)
 
+    # Получение доступных стилей графиков
+    available_styles = plt.style.available
+    print("Доступные стили графиков:", available_styles)
+
+    # Запрос выбора стиля у пользователя
+    selected_style = input(f"Введите желаемый стиль (по умолчанию 'default'): ")
+    if selected_style not in available_styles:
+        selected_style = 'default'
+
     # Plot the data
     # dplt.create_and_save_plot(stock_data, ticker, period)
     if use_date_range == "да":
-        dplt.create_and_save_plot(stock_data, ticker, period=None, use_date_range=True)
+        dplt.create_and_save_plot(stock_data, ticker, period=None, use_date_range=True, plot_style=selected_style)
     else:
-        dplt.create_and_save_plot(stock_data, ticker, period=period, use_date_range=False)
+        dplt.create_and_save_plot(stock_data, ticker, period=period, use_date_range=False, plot_style=selected_style)
 
 
 if __name__ == "__main__":
