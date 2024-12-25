@@ -72,6 +72,15 @@ def create_and_save_plot(data, ticker, period=None, use_date_range=False, filena
         ax3.legend()  # Добавляем легенду на третьем подграфике
         ax3.grid(True)  # Включаем сетку на третьем подграфике
 
+    # Добавляем стандартное отклонение на график цены
+    if 'Close' in data.columns:
+        std_dev = data['Close'].std()
+        ax1.axhline(y=data['Close'].mean() + std_dev, color='green', linestyle='--', alpha=0.5,
+                    label='Mean + Std Dev')
+        ax1.axhline(y=data['Close'].mean() - std_dev, color='red', linestyle='--', alpha=0.5,
+                    label='Mean - Std Dev')
+        ax1.legend()
+
     plt.tight_layout()  # Устанавливаем layout чтобы графики не перекрывались
 
     if filename is None:  # Проверяем, передано ли имя файла

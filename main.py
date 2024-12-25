@@ -56,6 +56,9 @@ def main():
     # Вызов функции для рассчета средней цены закрытия
     dd.calculate_and_display_average_price(stock_data)
 
+    # Вызов функции для расчёта стандартного отклонения цены закрытия акции
+    dd.calculate_and_display_standard_deviation(stock_data)
+
     threshold = float(input("Введите пороговое значение для колебаний цены в процентах (например, 10 для 10%): "))
     # Вызов функции для рассчета колебаний цены акции
     dd.notify_if_strong_fluctuations(stock_data, threshold)

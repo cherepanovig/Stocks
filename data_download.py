@@ -172,3 +172,22 @@ def add_macd(data, fast_period=12, slow_period=26, signal_period=9):
     data['Signal'] = signal
     data['Histogram'] = histogram
     return data
+
+
+def calculate_and_display_standard_deviation(data):
+    """
+    Вычисляет и выводит стандартное отклонение цены закрытия акций.
+
+    Параметры:
+        data: DataFrame с данными о ценах акций.
+    """
+    if not isinstance(data, pd.DataFrame):
+        print("Ошибка: Переданные данные не являются DataFrame.")
+        return
+
+    if 'Close' not in data.columns:
+        print("Ошибка: В DataFrame отсутствует колонка 'Close'.")
+        return
+
+    std_dev = data['Close'].std()
+    print(f"Стандартное отклонение цены закрытия: {std_dev:.2f}")
