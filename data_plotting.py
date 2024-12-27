@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt  # Импортируем matplotlib для построения графиков
 import pandas as pd  # Импортируем pandas для работы с данными
 import matplotlib.dates as mdates  # Импортируем для форматирования дат на графиках
+import plotly.express as px
 
 
 def create_and_save_plot(data, ticker, period=None, use_date_range=False, filename=None, plot_style='default'):
@@ -93,3 +94,54 @@ def create_and_save_plot(data, ticker, period=None, use_date_range=False, filena
             filename = f"{ticker}_{period}_stock_indicators_chart.png"  # Формируем имя файла по умолчанию
     plt.savefig(filename)  # Сохраняем график в файл
     print(f"График сохранен как {filename}")  # Выводим сообщение о сохранении графика
+
+    # Создаем первый интерактивный график для цены закрытия акции и скользящего среднего
+    graph1 = px.line(data, x=data.index, y=['Close', 'Moving_Average'], title=f"{ticker} Цена акций с течением времени")
+    # px.line создает линейный график, data: наш DataFrame с данными
+    # - x: использует индекс DataFrame как ось X (даты)
+    # - y: строит две линии - цену закрытия (Close) и скользящее среднее (Moving_Average)
+    graph1.update_layout(xaxis_title="Дата", yaxis_title="Цена")
+
+    # Создаем второй интерактивный график для RSI
+    graph2 = px.line(data, x=data.index, y=['RSI'], title=f"{ticker} RSI")
+    graph2.update_layout(xaxis_title="Дата", yaxis_title="RSI")
+    # Добавляем горизонтальные линии на уровнях 70 и 30 это стандартные уровни перекупелнности и перепроданности
+    graph2.add_hline(y=70, line_dash='dash', line_color='red')
+    graph2.add_hline(y=30, line_dash='dash', line_color='green')
+
+    # Создаем третий интерактивный график для MACD и сигналбной линии
+    graph3 = px.line(data, x=data.index, y=['MACD', 'Signal'], title=f"{ticker} MACD")
+    graph3.update_layout(xaxis_title="Дата", yaxis_title="MACD")
+    # Добавляем столбчатую диаграмму MACD
+    graph3.add_bar(x=data.index, y=data['Histogram'], name='Histogram')
+
+    # Отображаем графики
+    graph1.show()
+    graph2.show()
+    graph3.show()
+
+    # Формируем имена файлов для сохранения графиков
+    if filename is None:
+        filename1 = None
+        filename2 = None
+        filename3 = None
+        if use_date_range:
+            start_date = data.index.min().strftime('%Y-%m-%d')
+            end_date = data.index.max().strftime('%Y-%m-%d')
+            filename1 = f"{ticker}_{start_date}_to_{end_date}_stock_price_chart.html"
+            filename2 = f"{ticker}_{start_date}_to_{end_date}_rsi_chart.html"
+            filename3 = f"{ticker}_{start_date}_to_{end_date}_macd_chart.html"
+        else:
+            filename1 = f"{ticker}_{period}_stock_price_chart.html"
+            filename2 = f"{ticker}_{period}_rsi_chart.html"
+            filename3 = f"{ticker}_{period}_macd_chart.html"
+    else:
+        filename1 = f"{filename}_stock_price_chart.html"
+        filename2 = f"{filename}_rsi_chart.html"
+        filename3 = f"{filename}_macd_chart.html"
+
+    # Сохраняем графики в HTML-файлы
+    graph1.write_html(filename1)
+    graph2.write_html(filename2)
+    graph3.write_html(filename3)
+    print(f"Графики сохранены как {filename1}, {filename2}, {filename3}")
