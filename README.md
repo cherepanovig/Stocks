@@ -43,3 +43,11 @@ python main.py
 main.py: Основной файл, управляющий выполнением программы.
 data_download.py: Модуль для загрузки и обработки данных.
 data_plotting.py: Модуль для создания и сохранения графиков.
+
+![Демонстрация работы модуля](https://github.com/cherepanovig/Stocks/raw/master/Images/AAPL_price.png)
+![Демонстрация работы модуля](https://github.com/cherepanovig/Stocks/raw/master/Images/GOOGL_MACD.png)
+![Демонстрация работы модуля](https://github.com/cherepanovig/Stocks/raw/master/Images/GOOGL_RSI.png)
+![Демонстрация работы модуля](https://github.com/cherepanovig/Stocks/raw/master/Images/GOOGL_price.png)
+
+
+
